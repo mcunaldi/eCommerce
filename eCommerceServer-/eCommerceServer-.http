@@ -1,0 +1,18 @@
+@eCommerceServer__HostAddress = http://localhost:5208
+
+POST http://localhost:5208/api/Auth/Login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "string@gmail.com",
+  "password": "String123"
+}
+
+###
+
+GET https://localhost:7179/api/Products/GetAll
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InN0cmluZ0BnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoic3RyaW5nIHN0cmluZyIsIm5iZiI6MTcwNDMwMzc3NCwiZXhwIjoxNzA0MzA0OTc0LCJpc3MiOiJNZWhtZXQgQ2FuIMOcTkFMREkiLCJhdWQiOiJsb2NhbGhvc3Q6NDIwMCJ9.cuH8cLhcl_IK96kcdKQxecanjsrVDnAp8yAUdf4ST8PktzQeqNc8wfmgWKNY9_5Pdvl-OPvtIkpWKDV2NMFh7A
+
+###

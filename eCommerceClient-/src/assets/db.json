@@ -1,0 +1,52 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "name": "elma",
+            "coverImageUrl": "elma.png",
+            "price": 100
+        },
+        {
+            "id": 2,
+            "name": "armut",
+            "coverImageUrl": "armut.png",
+            "price": 400
+        },
+        {
+            "id": 3,
+            "name": "karpuz",
+            "coverImageUrl": "karpuz.png",
+            "price": 200
+        },
+        {
+            "id": 4,
+            "name": "muz",
+            "coverImageUrl": "muz.png",
+            "price": 600
+        }
+    ],
+    "carts": [
+        {
+            "id": 1,
+            "productId": 1,
+            "product": {
+                "id": 1,
+                "name": "Elma",
+                "coverImageUrl": "elma.png",
+                "price": 100
+            },
+            "quantity": 1
+        },
+        {
+            "id": 2,
+            "productId": 3,
+            "product": {
+                "id": 3,
+                "name": "Karpuz",
+                "coverImageUrl": "karpuz.png",
+                "price": 200
+            },
+            "quantity": 1
+        }
+    ]
+}
