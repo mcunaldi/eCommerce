@@ -2,6 +2,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { api } from '../../constants/api';
+import { ErrorService } from '../../service/error.service';
 
 @Component({
   selector: 'app-register',
@@ -12,18 +14,19 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class RegisterComponent {
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private error: ErrorService) {}
 
   signUp(form:NgForm){
     if(form.valid){
-      this.http.post("https://localhost:7179/api/Auth/Register", form.value)
+      this.http.post(`${api}/Auth/Register`, form.value)
       .subscribe({
         next: (res:any)=> {
           this.router.navigateByUrl("/login");
         },
-        error: (err: HttpErrorResponse)=> {
-          console.log(err);
-        }
+        error: (err: HttpErrorResponse)=> this.error.errorHandler(err)
       })
     }
   }

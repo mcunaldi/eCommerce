@@ -12,67 +12,74 @@
 <hr>
 
 @for(order of orders; track order){
-    <a class="card mt-2" data-bs-toggle="collapse" href="#collapse-{{order.id}}">
-        <div class="card-header d-flex justify-content-between">
-            <span>Sipariş Tarihi: {{order.date}}</span>
-            <span>Sipariş Numarası: {{order.number}}</span>
-        </div>
+<a class="card mt-2" data-bs-toggle="collapse" href="#collapse-{{order.id}}">
+    <div class="card-header d-flex justify-content-between">
+        <span>Sipariş Tarihi: {{order.date}}</span>
+        <span>Sipariş Numarası: {{order.number}}</span>
+    </div>
 
-        <div class="card-body collapse" id="collapse-{{order.id}}">
-            @for (detail of order.details; track detail) {
-                <div class="card mt-1">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <img src="assets/{{detail.product.coverImageUrl}}" alt="" width="100">
-                        <h5>
-                                Ürün Adı: {{detail.product.name}}
-                        </h5>
-                        <h5 class="ms-2 me-2">
-                                Adet: {{detail.quantity}}
-                        </h5>
-                        <span class="ms-2 me-2 alert alert-success">
-                                {{detail.price | trCurrency: '₺':true}}
-                        </span>
+    <div class="card-body collapse" id="collapse-{{order.id}}">
+        @for (detail of order.details; track detail) {
+        <div class="card mt-1">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <img src="assets/{{detail.product.coverImageUrl}}" alt="" width="100">
+                <h5>
+                    Ürün Adı: {{detail.product.name}}
+                </h5>
+                <h5 class="ms-2 me-2">
+                    Adet: {{detail.quantity}}
+                </h5>
+                <span class="ms-2 me-2 alert alert-success">
+                    {{detail.price | trCurrency: '₺':true}}
+                </span>
+            </div>
+
+            <div class="container">
+                <div class="card">
+                    <div class="row d-flex justify-content-between px-3 top">
+                        <div class="d-flex">
+                            <h5>SİPARİŞ <span class="text-primary font-weight-bold">{{order.number}}</span></h5>
+                        </div>
+                        @if (order.orderStatus >=1) {
+                        <div class="d-flex flex-column text-sm-right">
+                            <p class="mb-0 bold">Tahmini Teslim Tarihi: <span>{{order.expectedArrival}}</span></p>
+                            <p class="mb-0 bold">Kargo Şirket: <span>{{order.cargoCompany}}</span></p>
+                            <p class="mb-0 bold">Takip Numarası: <span class="text text-danger">{{order.cargoTrackingNumber}}</span></p>
+                        </div>}
                     </div>
-
-                    <div class="container">
-                        <div class="card">
-                            <div class="row d-flex justify-content-between px-3 top">
-                                <div class="d-flex">
-                                    <h5>SİPARİŞ <span class="text-primary font-weight-bold">{{order.number}}</span></h5>
-                                </div>
-                                <div class="d-flex flex-column text-sm-right">
-                                    <p class="mb-0">Tahmini Teslim Tarihi <span>{{order.expectedArrival}}</span></p>
-                                    <p>{{order.cargoCompany}} <span class="font-weight-bold">{{order.cargoTrackingNumber}}</span></p>
-                                </div>
-                            </div>
-                            <!-- Add class 'active' to progress -->
-                            <div class="row d-flex justify-content-center">
-                                <div class="col-12">
-                                <ul id="progressbar" class="text-center">
-                                    <li class="active step0">
-                                        <h6>Sipariş Onaylandı</h6>
-                                    </li>
-                                    <li class="active step0">
-                                        <h6>Kargoya Teslim Edildi</h6>
-                                    </li>
-                                    <li class="active step0">
-                                        <h6>Dağıtıma Çıktı</h6>
-                                    </li>
-                                    <li class="step0">
-                                        <h6>Teslim Edildi</h6>
-                                    </li>
-                                </ul>
-                                </div>
-                            </div>
+                    <!-- Add class 'active' to progress -->
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12">
+                            <ul id="progressbar" class="text-center">
+                                <li class="step0" [ngClass]="order.orderStatus >= 0 ? 'active' : ''">
+                                    <h6>Sipariş Onaylandı</h6>
+                                </li>
+                                <li class="step0" [ngClass]="order.orderStatus >= 1 ? 'active' : ''">
+                                    <h6>Kargoya Teslim Edildi</h6>
+                                </li>
+                                <li class="step0" [ngClass]="order.orderStatus >= 2 ? 'active' : ''">
+                                    <h6>Dağıtıma Çıktı</h6>
+                                </li>
+                                <li class="step0" [ngClass]="order.orderStatus >= 3 ? 'active' : ''">
+                                    <h6>Teslim Edildi</h6>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                   
                 </div>
-                
-                
-                }
-        </div>
-        
+            </div>
 
-    </a>
-    }
+        </div>
+
+
+        }
+    </div>
+
+
+</a>
+}
+@empty {
+<h1 class="alert alert-danger text-center">
+    Sipariş bulunamadı!
+</h1>
+}

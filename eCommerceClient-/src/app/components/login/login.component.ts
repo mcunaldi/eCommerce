@@ -1,7 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { api } from '../../constants/api';
+import { MessageService } from 'primeng/api';
+import { ErrorService } from '../../service/error.service';
 
 @Component({
   selector: 'app-login',
@@ -10,22 +13,30 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
 
-  constructor(private http: HttpClient, private router: Router) {}
+  @ViewChild("email") emailInput: ElementRef<HTMLInputElement> | undefined;
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private primeng: MessageService,
+    private error: ErrorService) { }
+
+  ngAfterViewInit(): void {
+    this.emailInput?.nativeElement.focus();
+  }
 
   signIn(form: NgForm) {
-    if(form.valid){
-      this.http.post("https://localhost:7179/api/Auth/Login", form.value) //değiştirilecek
-      .subscribe({
-        next: (res:any)=> {
-          localStorage.setItem("response", JSON.stringify(res));
-          this.router.navigateByUrl("/")
-        },
-        error: (err: HttpErrorResponse)=> {
-          console.log(err);
-        }
-      })
+    if (form.valid) {
+      this.http.post(`${api}/Auth/Login`, form.value) //değiştirilecek
+        .subscribe({
+          next: (res: any) => {
+            localStorage.setItem("response", JSON.stringify(res));
+            this.router.navigateByUrl("/")
+          },
+          error: (err: HttpErrorResponse) => this.error.errorHandler(err)
+        })
 
     }
   }

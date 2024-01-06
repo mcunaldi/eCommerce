@@ -1,7 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ProductModel } from '../../models/product.model';
 import { CommonModule } from '@angular/common';
 import { TrCurrencyPipe } from 'tr-currency';
+import { OrderModel } from '../../models/order.model';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../service/auth.service';
+import { api } from '../../constants/api';
+import { ErrorService } from '../../service/error.service';
 
 @Component({
   selector: 'app-order',
@@ -10,63 +15,28 @@ import { TrCurrencyPipe } from 'tr-currency';
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })
-export class OrderComponent {
-orders: any[] = [
-  { 
-    "id": 1,
-    "number": "S0000000001",
-    "date": "24.12.2023 11.27",
-    "expectedArrival": "26.12.2023",
-    "cargoCompany": "UPS",
-    "cargoTrackingNumber": "234094567242423422898",
-    "details": [
-      {
-        "id": 1,
-        "productId": 1,
-        "price": 100,
-        "quantity": 1,
-        "product": {
-          "id": 1,
-          "name": "Elma",
-          "coverImageUrl": "elma.png",
-          "price": 100
-      }
-      },
-      {
-        "id": 2,
-        "productId": 1,
-        "price": 100,
-        "quantity": 1,
-        "product": {
-          "id": 1,
-          "name": "Elma",
-          "coverImageUrl": "elma.png",
-          "price": 100
-      }
-      }
-    ]
-  },
-  { 
-    "id": 2,
-    "number": "S0000000002",
-    "date": "24.12.2023 11.27",
-    "expectedArrival": "26.12.2023",
-    "cargoCompany": "UPS",
-    "cargoTrackingNumber": "234094567242423422898",
-    "details": [
-      {
-        "id": 1,
-        "productId": 1,
-        "price": 100,
-        "quantity": 1,
-        "product": {
-          "id": 1,
-          "name": "Elma",
-          "coverImageUrl": "elma.png",
-          "price": 100
-      }
-      }
-    ]
+export class OrderComponent implements OnInit {
+orders: OrderModel[] = [];
+
+constructor(
+  private http: HttpClient,
+  private auth: AuthService,
+  private error: ErrorService){}
+  ngOnInit(): void {
+    this.getAll();
   }
-];
+
+getAll(){
+  this.http.get<OrderModel[]>(`${api}/Orders/GetAll`, {
+    headers:{
+      "Authorization" : "Bearer " + this.auth.token
+    }
+  })
+  .subscribe({
+    next: (res)=> {
+      this.orders = res;
+    },
+    error: (err: HttpErrorResponse)=> this.error.errorHandler(err)
+  })
+}
 }

@@ -19,11 +19,12 @@ public sealed class JwtProvider
 	{
 		IEnumerable<Claim> claims = new List<Claim>()
 		{
+			new Claim("UserId",user.Id.ToString()),
 			new Claim("Email",user.Email),
 			new Claim("Name",string.Join(" ",user.Firstname,user.LastName))
 		};
 
-		DateTime? expires = DateTime.Now.AddMinutes(20);
+		DateTime? expires = DateTime.Now.AddMonths(1);
 		JwtSecurityToken jwtSecurityToken = new(
 			issuer: _configuration.GetSection("Jwt:Issuer").Value,
 			audience: _configuration.GetSection("Jwt:Audience").Value,

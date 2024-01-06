@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { TrCurrencyPipe } from 'tr-currency';
 import { ShoppingCartModel } from '../../models/shopping-cart.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ShoppingCartService } from '../../service/shopping-cart.service';
+import { AuthService } from '../../service/auth.service';
+import { api } from '../../constants/api';
+import { SwalService } from '../../service/swal.service';
+import { MessageService } from 'primeng/api';
+import { ErrorService } from '../../service/error.service';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -12,65 +18,60 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 })
 export class ShoppingCartComponent implements OnInit {
   carts: ShoppingCartModel[] = []
-  sum:number = 0;
 
-  constructor(private http: HttpClient) { } //yapıcı metod=> class çağrıldığı esnada ilk çalışan metot
+  constructor(
+    private http: HttpClient,
+    public _cart: ShoppingCartService,
+    private auth: AuthService,
+    private swal: SwalService,
+    private primeng: MessageService,
+    private error: ErrorService) { } //yapıcı metod=> class çağrıldığı esnada ilk çalışan metot
 
-  ngOnInit(): void {
-    this.getAll();
+  ngOnInit(): void { } //implement ile constructor 'da kullanılan metotlar bestp te buraya yazılır.
 
-  } //implement ile constructor 'da kullanılan metotlar bestp te buraya yazılır.
-
-  getAll() {
-    this.http.get("assets/db.json")
-      .subscribe({
-        next: (res: any) => {
-          this.carts = res.carts;
-
-          this.calculateSum();
-        },
-        error: (err: HttpErrorResponse) => {
-          console.log(err);
-        }
-      })
-
-  }
-
-  increment(cart: ShoppingCartModel) {
-    cart.quantity++;
-    this.calculateSum();
-  }
 
   decrement(cart: ShoppingCartModel) {
     if (cart.quantity === 1) {
       const response = confirm("Ürünü sepetten kaldırmak istiyor musunuz?")
+
       if (response) {
-        const index = this.carts.findIndex(p => p === cart);
-        this.carts.splice(index, 1)
-
-        this.calculateSum();
+        this._cart.decrement(cart.productId);
       }
-      return;
+    } else {
+      this._cart.decrement(cart.productId);
     }
-
-    cart.quantity--;
-
-    this.calculateSum();
   }
 
-  remove(index: number) {
-    const response = confirm("Ürünü sepetten kaldırmak istiyor musunuz?")
-    if (response) {
-      this.carts.splice(index, 1)
-    }
-
-    this.calculateSum();
+  remove(id: number) {
+    this.swal.fire("Sil", "Ürünü sepetten kaldırmak istiyor musunuz?", "Sil", "question", ()=> {
+      this.http.get(`${api}/ShoppingCarts/RemoveById?id=${id}`, {
+        headers: {
+          "Authorization": "Bearer " + this.auth.token
+        }
+      })
+        .subscribe({
+          next: () => {
+            this._cart.getAll();
+          },
+          error: (err: HttpErrorResponse)=> this.error.errorHandler(err)
+        })
+    })
   }
 
-  calculateSum(){
-    this.sum=0;
-    for(const cart of this.carts){
-      this.sum += cart.quantity * cart.product.price;
-    }
+  pay() {
+    this.swal.fire("Ödeme Yap", "Ödeme işlemini onaylıyor musunuz?", "Öde", "question", () => {
+      this.http.get(`${api}/ShoppingCarts/Pay`, {
+        headers: {
+          "Authorization": "Bearer " + this.auth.token
+        }
+      })
+        .subscribe({
+          next: () => {
+            this._cart.getAll();
+          },
+          error: (err: HttpErrorResponse)=> this.error.errorHandler(err)
+        })
+    })
+
   }
 }

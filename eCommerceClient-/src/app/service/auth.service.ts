@@ -11,6 +11,11 @@ export class AuthService {
   decode: DecodeModel = new DecodeModel();
   token: string = ""; 
 
+ 
+  constructor() {
+    this.isAuthenticated()
+  }
+
   isAuthenticated() {
     const responseString = localStorage.getItem("response");
 

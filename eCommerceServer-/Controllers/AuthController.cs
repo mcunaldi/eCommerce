@@ -38,7 +38,7 @@ public sealed class AuthController : ControllerBase
 		if (!result.IsValid)
 		{	
 			List<string> errorMessage = result.Errors.Select(s=> s.ErrorMessage).ToList();
-			return BadRequest(errorMessage);
+			return StatusCode(422, errorMessage);
 		}
 
 		//if(request.FirstName == "" || request.FirstName == null)
@@ -124,7 +124,7 @@ public sealed class AuthController : ControllerBase
 		if (!result.IsValid)
 		{
 			List<string> errorMessages = result.Errors.Select(e=> e.ErrorMessage).ToList();
-			return BadRequest(errorMessages);
+			return StatusCode(422, errorMessages);
 		}
 		//User Kontrolü
 
